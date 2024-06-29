@@ -207,11 +207,11 @@ class TicketService
      */
     private function authenticate(): void
     {
+        $this->apiToken = $this->authService->authenticate();
 
         if (!$this->apiToken) {
             throw new AuthenticationFailedException('Non authentifié');
         }
-        $this->apiToken = $this->authService->authenticate();
     }
 
     /**
