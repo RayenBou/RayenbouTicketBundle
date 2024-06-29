@@ -1,22 +1,37 @@
-{% block body %}
-	<h1>Tickets</h1>
-	<table>
-		<tbody>
-			{% for ticket in tickets %}
-				<tr>
-					<td>{{ ticket.id }}</td>
-					<td>{{ ticket.title }}</td>
-					<td>{{ ticket.createdAt|date('d/m/Y') }}</td>
+{% extends "@RayenbouTicket/ticket/base.html.twig" %}
+{% block title %}
+	Ticket
 
-					<td>
-						<a href="{{ path('rayenbou_ticket_conversation', {'token': ticket.token}) }}">See conversation</a>
-					</td>
+
+{% endblock %}
+
+{% block body %}
+	<div class='container border border  mt-4 p-4'>
+		<h2 class='text-center '>Create new ticket</h2>
+		{% block form %}
+			{{ include('@RayenbouTicket/ticket/_form.html.twig') }}
+		{% endblock %}
+		<h2 class='text-center my-2'>Tickets</h2>
+		<table class="table table-striped p-5">
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Date</th>
+					<th>Action</th>
 				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	<h2>Create new ticket</h2>
-	{% block form %}
-		{{include('@RayenbouTicket/ticket/_form.html.twig')}}
-	{% endblock %}
+			</thead>
+			<tbody>
+				{% for ticket in tickets %}
+					<tr>
+						<td>{{ ticket.title }}</td>
+						<td>{{ ticket.createdAt|date('d/m/Y H:i') }}</td>
+						<td>
+							<a href="{{ path('rayenbou_ticket_conversation', {'token': ticket.token}) }}" class="btn btn-dark">See conversation</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+	</div>
 {% endblock %}

@@ -1,28 +1,31 @@
-{% block body %}
-	<h1>{{ticket.title}}</h1>
-	<table>
-		<thead>
-			<tr>
-				<th>message</th>
-				<th>Date</th>
-				<th>Author</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for message in ticket.ticketMessages %}
-				<tr>
-					<td>{{ message.description }}</td>
-					<td>{{ message.createdAt|date('d/m/Y H:i:s') }}</td>
-					<td>{{ message.author }}</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+{% extends "@RayenbouTicket/ticket/base.html.twig" %}
 
-	{% if ticket.status %}
-		{% block form %}
-			{{include('@RayenbouTicket/ticket/_form.html.twig')}}
-		{% endblock %}
-	{% endif %}
-	<a href="{{ path('rayenbou_ticket_index') }}">Back to tickets</a>
+
+{% block body %}
+	<div class='container border border mt-4 p-4'>
+		<a href="{{ path('rayenbou_ticket_index') }}" class='btn btn-dark mt-3'>Back to tickets</a>
+		<h2 class='mt-4 py-2 '>
+			{{ticket.title}}
+		</h2>
+		{% for message in ticket.ticketMessages %}
+			<div class="d-flex {{ message.author ? 'justify-content-start' : 'justify-content-end' }} mb-2">
+				<div class="card" style="min-width: 300px;">
+					<div class="card-body">
+						<p class="card-text">{{ message.description }}</p>
+					</div>
+					<div class="card-footer d-flex justify-content-between">
+						<small>{{ message.author ? message.author : "You" }}</small>
+						<small>{{ message.createdAt|date('d/m/y  H:i') }}</small>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+
+		{% if ticket.status %}
+			{% block form %}
+				{{include('@RayenbouTicket/ticket/_form.html.twig')}}
+			{% endblock %}
+		{% endif %}
+
+	</div>
 {% endblock %}

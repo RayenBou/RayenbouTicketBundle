@@ -160,7 +160,11 @@ class TicketService
         });
 
         if ($filteredTickets) {
-            return array_map(fn ($ticket) => new TicketDTO($ticket), $filteredTickets);
+            $tickets = array_map(fn ($ticket) => new TicketDTO($ticket), $filteredTickets);
+            usort($tickets, function ($a, $b) {
+                return $b->id - $a->id;
+            });
+            return $tickets;
         } else {
             return [];
         }
@@ -208,7 +212,6 @@ class TicketService
     private function authenticate(): void
     {
         $this->apiToken = $this->authService->authenticate();
-
         if (!$this->apiToken) {
             throw new AuthenticationFailedException('Non authentifié');
         }

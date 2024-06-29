@@ -1,73 +1,80 @@
-# TicketBundle
+# RayenbouTicketBundle
 
-This project provides a PHP integration for a ticketing system, allowing for the fetching of individual tickets and lists of tickets from a specified API. It utilizes the Symfony HttpClient component to communicate with the API and handles authentication through bearer tokens.
+This project provides a Symfony integration for a ticketing system, allowing for the fetching of individual tickets and lists of tickets from a specified API. It utilizes the Symfony HttpClient component to communicate with the API and handles authentication through bearer tokens with JWT Token.
 
-## Features
+This project exist to be use with [Dashboard Bundle](https://github.com/RayenBou/RayenbouDashboardBundle).
 
-- Fetch individual tickets by ID.
-- Fetch a list of all tickets.
-- Authentication via JWT tokens.
-- Error handling for HTTP and transport exceptions.
+The DashboardBundle part can be installed on your app, while the TicketBundle part can be installed on any other app.
 
-## Requirements
+This documentation provides a step-by-step guide to setting up the ticket environment for your project.
 
-- PHP 8.1 or higher.
-- Symfony HttpClient component.
-- Valid JWT token returned by been authenticate with the server side ticket bundle for authentication.
+Right now the project is in Alpha and currently don't have any recipe but it might change soon.
 
-## Installation
+## How to use it
 
-To use this integration in your project, follow these steps:
 
-1. Ensure you have Composer installed.
-2. Add this project as a dependency using Composer:
+1. Register `TICKET_URL`,`TICKET_USERNAME` and `TICKET_PASSWORD` in your .Env (create username and password with the [Dashboard Bundle](https://github.com/RayenBou/RayenbouTicketBundle)).
+2. Go to  `/ticket/`.
+2. Send ticket, answer through a messenger-like conversation.
+4. If ticket is closed you can no longer answer to it.
 
-``composer require rayenbou/ticket-bundle``
 
-## Ticket service 
+## Initial Setup
+1. **Composer**
 
-The ticket Service provide simple method to create, read and update a ticket.
 
-# create new ticket
-```
-$ticketService->createTicket([
-                'title' => 'This is a ticket',
-                'description' => 'This is the description of the ticket',
-            ]);
-```
+   ```bash
+   composer require rayenbou/dashboard-bundle
+    ```
 
-# add a message to an already existing ticket
-```
-$ticketService->modifyTicket([
-                'id'    => 1,
-                'description' =>'This is the description of the ticket',
-            ]);
-```
-# get all tickets from a given email 
-```
-'tickets' => $ticketService->findAll()
-```
-# get one ticket from a given email
-```
-$ticketService->find($id)
-```
+    An error might occur at the cache:clear saying "authentication is missing". Don't worry about this, you just have to follow
+    Parameter setting. Currently working on the recipe to avoid this problem.
 
-## Error Handling
-Errors during API calls are returned as Exception objects. 
 
-Custom Exception existing:
+2. **Parameter Settings**
 
-`AuthenticationFailedException` : Something about wrong credentials , check that yours Env var a corectly filled with username,password and domain from the server side of the ticket bundle.
-`TicketException`: Failed to create or get tickets, this is mainly caused by server side of ticket bundle.
-`TicketFetchException`: More precise exception that give the id of the ticket
+   in `config/packages/rayenbou_ticket.yaml`:
+   ```yaml
+   rayenbou_ticket:
+        authentication:
+            url: '%env(TICKET_URL)%'
+            username: '%env(TICKET_USERNAME)%'
+            password: '%env(TICKET_PASSWORD)%'
+        settings:
+            verify_peer: false
+    ```
+    in `config/routes/rayenbou_ticket.yaml`:
+    ```yaml
+    rayenbou_ticket:
+        resource: "@RayenbouTicketBundle/Resources/config/routing.yaml"
+    ```
+    in `.env` :
+    ```env
+    TICKET_URL=
+    TICKET_USERNAME=
+    TICKET_PASSWORD=
+    ```
+
+## Dev Environnement
+
+The key `verify_peer` under setting in the `config/packages/rayenbou_ticket.yaml` is default to `false` to work on a self validated TLS 
+environnement, feel free to deactivate it if you work on other environnement.
+
+## Tests
+
+Unit tests and Integration tests are on their way.
+
+## Evolution
+
+1. Possibility to override all templates and Controller.
 
 
 ## Contributing
 Contributions to this project are welcome. Please ensure to follow the existing coding style and add unit tests for any new or changed functionality.
 
+Please use `PHPstan` and `PHP-CS-FIXER`.
+
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 
-
-```
