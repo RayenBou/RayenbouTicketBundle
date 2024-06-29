@@ -1,5 +1,8 @@
 # RayenbouTicketBundle
 
+![Ticket Bundle](docs/images/img.png?raw=true "Ticket Bundle")
+
+
 This project provides a Symfony integration for a ticketing system, allowing for the fetching of individual tickets and lists of tickets from a specified API. It utilizes the Symfony HttpClient component to communicate with the API and handles authentication through bearer tokens with JWT Token.
 
 This project exist to be use with [Dashboard Bundle](https://github.com/RayenBou/RayenbouDashboardBundle).
