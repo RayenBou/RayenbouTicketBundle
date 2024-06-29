@@ -6,10 +6,10 @@ use Rayenbou\TicketBundle\DTO\TicketDTO;
 use Rayenbou\TicketBundle\Exception\TicketException;
 
 /**
- * Interface TicketServiceInterface
+ * Interface TicketServiceInterface.
  *
  * This interface defines the contract for a service that manages tickets.
- * 
+ *
  * @author Rayen Boumaza <https://github.com/RayenBou>
  */
 interface TicketServiceInterface

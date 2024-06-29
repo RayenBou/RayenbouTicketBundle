@@ -2,14 +2,14 @@
 
 namespace Rayenbou\TicketBundle\Service;
 
-use Rayenbou\TicketBundle\DTO\TicketDTO;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Rayenbou\TicketBundle\Constants\TicketConstants;
-use Rayenbou\TicketBundle\Exception\TicketException;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Rayenbou\TicketBundle\Exception\TicketFetchException;
+use Rayenbou\TicketBundle\DTO\TicketDTO;
 use Rayenbou\TicketBundle\Exception\AuthenticationFailedException;
+use Rayenbou\TicketBundle\Exception\TicketException;
+use Rayenbou\TicketBundle\Exception\TicketFetchException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * Class TicketService.
@@ -102,7 +102,7 @@ class TicketService
         }
         $ticketData['domain'] = $host;
 
-        $response = $this->sendRequest('PATCH', TicketConstants::TICKET_URL . '/' . $ticketData['token'], $ticketData, TicketConstants::CONTENT_TYPE_PATCH);
+        $response = $this->sendRequest('PATCH', TicketConstants::TICKET_URL.'/'.$ticketData['token'], $ticketData, TicketConstants::CONTENT_TYPE_PATCH);
 
         if (200 === $response['status']) {
             return true;
@@ -122,7 +122,7 @@ class TicketService
      */
     public function find(string $token): TicketDTO
     {
-        $response = $this->sendRequest('GET', TicketConstants::TICKET_URL . '/' . $token, null, TicketConstants::CONTENT_TYPE_MAIN);
+        $response = $this->sendRequest('GET', TicketConstants::TICKET_URL.'/'.$token, null, TicketConstants::CONTENT_TYPE_MAIN);
 
         if (200 === $response['status']) {
             if (isset($response['content'])) {
@@ -164,6 +164,7 @@ class TicketService
             usort($tickets, function ($a, $b) {
                 return $b->id - $a->id;
             });
+
             return $tickets;
         } else {
             return [];
@@ -187,7 +188,7 @@ class TicketService
         $this->authenticate();
 
         try {
-            $response = $this->httpClient->request($method, $this->ticketUrl . $url, [
+            $response = $this->httpClient->request($method, $this->ticketUrl.$url, [
                 'headers' => $this->getHeaders($contentType),
                 'body' => $data ? json_encode($data) : null,
             ]);
@@ -227,7 +228,7 @@ class TicketService
     private function getHeaders(string $contentType): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->apiToken,
+            'Authorization' => 'Bearer '.$this->apiToken,
             'Content-Type' => $contentType,
         ];
     }

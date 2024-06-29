@@ -37,7 +37,7 @@ class AuthenticationService
     public function authenticate(): ?string
     {
         try {
-            $response = $this->httpClient->request('POST', $this->ticketUrl . TicketConstants::CHECK_URL, [
+            $response = $this->httpClient->request('POST', $this->ticketUrl.TicketConstants::CHECK_URL, [
                 'headers' => [
                     'Content-Type' => TicketConstants::CONTENT_TYPE_MAIN,
                 ],

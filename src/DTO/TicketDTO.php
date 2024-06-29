@@ -61,7 +61,7 @@ class TicketDTO
         try {
             $this->createdAt = new \DateTime($data['createdAt']);
         } catch (\Exception $e) {
-            throw new \InvalidArgumentException('Invalid createdAt value: ' . $e->getMessage());
+            throw new \InvalidArgumentException('Invalid createdAt value: '.$e->getMessage());
         }
         $this->domain = $data['domain'];
         $this->status = $data['status'];

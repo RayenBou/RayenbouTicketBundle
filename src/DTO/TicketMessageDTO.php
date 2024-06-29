@@ -46,7 +46,7 @@ class TicketMessageDTO
         try {
             $this->createdAt = new \DateTime($data['createdAt']);
         } catch (\Exception $e) {
-            throw new \InvalidArgumentException('Invalid createdAt value: ' . $e->getMessage());
+            throw new \InvalidArgumentException('Invalid createdAt value: '.$e->getMessage());
         }
         $this->author = $data['author'];
         $this->ticket = $data['ticket'];
