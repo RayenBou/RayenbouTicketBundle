@@ -1,0 +1,34 @@
+{
+  "name": "rayenbou/ticket-bundle",
+  "description": "A Symfony bundle to manage tickets",
+  "license": "MIT",
+  "type": "symfony-bundle",
+  "authors": [
+    {
+      "name": "Rayen Boumaza",
+      "email": "boumaza.rayen@outlook.fr",
+      "role": "Author"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Rayenbou\\TicketBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Rayenbou\\TicketBundle\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-main": "1.x-dev"
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  }
+}

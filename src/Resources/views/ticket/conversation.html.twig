@@ -1,0 +1,28 @@
+{% block body %}
+	<h1>{{ticket.title}}</h1>
+	<table>
+		<thead>
+			<tr>
+				<th>message</th>
+				<th>Date</th>
+				<th>Author</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for message in ticket.ticketMessages %}
+				<tr>
+					<td>{{ message.description }}</td>
+					<td>{{ message.createdAt|date('d/m/Y H:i:s') }}</td>
+					<td>{{ message.author }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	{% if ticket.status %}
+		{% block form %}
+			{{include('@RayenbouTicket/ticket/_form.html.twig')}}
+		{% endblock %}
+	{% endif %}
+	<a href="{{ path('rayenbou_ticket_index') }}">Back to tickets</a>
+{% endblock %}

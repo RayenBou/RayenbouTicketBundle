@@ -1,0 +1,44 @@
+services:
+  rayenbou_ticket.http_client_factory:
+    class: Rayenbou\TicketBundle\Service\HttpClientFactory
+    factory: ['Rayenbou\TicketBundle\Service\HttpClientFactory', "create"]
+    arguments:
+      $options:
+        verify_peer: "%rayenbou_ticket.settings.verify_peer%"
+
+  rayenbou_ticket.authentication_service:
+    class: Rayenbou\TicketBundle\Service\AuthenticationService
+    arguments:
+      - "@rayenbou_ticket.http_client_factory"
+      - ticket_url: "%rayenbou_ticket.authentication.url%"
+        ticket_username: "%rayenbou_ticket.authentication.username%"
+        ticket_password: "%rayenbou_ticket.authentication.password%"
+
+  rayenbou_ticket.ticket_service:
+    class: Rayenbou\TicketBundle\Service\TicketService
+    arguments:
+      - "@request_stack"
+      - "@rayenbou_ticket.http_client_factory"
+      - "@rayenbou_ticket.authentication_service"
+      - ticket_url: "%rayenbou_ticket.authentication.url%"
+        ticket_username: "%rayenbou_ticket.authentication.username%"
+        ticket_password: "%rayenbou_ticket.authentication.password%"
+
+  Rayenbou\TicketBundle\Service\TicketService: "@rayenbou_ticket.ticket_service"
+
+  Rayenbou\TicketBundle\Controller\TicketController:
+    tags:
+      - { name: "controller.service_arguments" }
+      - { name: "container.service_subscriber" }
+    arguments:
+      - "@rayenbou_ticket.ticket_service"
+
+    public: true
+    autowire: true
+    autoconfigure: true
+    # pour pouvoir injecter les service de l'abstract controller et utiliser ses methode
+    # il ne faut pas preciser d'argument a la methode setContainer pour laisser l'injection de dependance
+    # se faire automatiquement. il faut juste preciser un tableau vide
+    calls:
+      - method: setContainer
+        arguments: [""]

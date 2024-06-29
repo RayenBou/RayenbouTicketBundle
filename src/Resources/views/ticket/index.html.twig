@@ -1,0 +1,22 @@
+{% block body %}
+	<h1>Tickets</h1>
+	<table>
+		<tbody>
+			{% for ticket in tickets %}
+				<tr>
+					<td>{{ ticket.id }}</td>
+					<td>{{ ticket.title }}</td>
+					<td>{{ ticket.createdAt|date('d/m/Y') }}</td>
+
+					<td>
+						<a href="{{ path('rayenbou_ticket_conversation', {'token': ticket.token}) }}">See conversation</a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<h2>Create new ticket</h2>
+	{% block form %}
+		{{include('@RayenbouTicket/ticket/_form.html.twig')}}
+	{% endblock %}
+{% endblock %}
