@@ -12,9 +12,9 @@ class TicketFetchException extends \Exception
      *
      * @param int $id the ID of the ticket that failed to be fetched
      */
-    public function __construct(int $id)
+    public function __construct(string $token)
     {
-        $message = "Failed to fetch ticket with ID $id and its messages.";
+        $message = "Failed to fetch ticket with token $token and its messages.";
         parent::__construct($message);
     }
 }

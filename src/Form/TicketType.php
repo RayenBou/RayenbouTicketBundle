@@ -3,11 +3,11 @@
 namespace Rayenbou\TicketBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class TicketType extends AbstractType
 {
@@ -17,6 +17,7 @@ class TicketType extends AbstractType
             $builder
                 ->add('title', TextType::class, [
                     'label' => 'Title',
+                    'attr' => ['class' => 'form-control'],
                     'required' => true,
                     'constraints' => [
                         new NotBlank([
@@ -31,6 +32,7 @@ class TicketType extends AbstractType
         }
         $builder->add('description', TextType::class, [
             'label' => 'message',
+            'attr' => ['class' => 'form-control'],
             'required' => true,
             'constraints' => [
                 new NotBlank([

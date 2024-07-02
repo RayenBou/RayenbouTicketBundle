@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rayenbou\TicketBundle\Service;
 
-use Rayenbou\TicketBundle\Constants\TicketConstants;
 use Rayenbou\TicketBundle\DTO\TicketDTO;
-use Rayenbou\TicketBundle\Exception\AuthenticationFailedException;
-use Rayenbou\TicketBundle\Exception\TicketException;
-use Rayenbou\TicketBundle\Exception\TicketFetchException;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Rayenbou\TicketBundle\Constants\TicketConstants;
+use Rayenbou\TicketBundle\Exception\TicketException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Rayenbou\TicketBundle\Exception\TicketFetchException;
+use Rayenbou\TicketBundle\Exception\AuthenticationFailedException;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
  * Class TicketService.
@@ -52,7 +54,7 @@ class TicketService
         array $params
     ) {
         if (!isset($params['ticket_url'], $params['ticket_username'])) {
-            throw new \InvalidArgumentException('Les paramètres "ticket_url" et "ticket_username" sont requis.');
+            throw new \InvalidArgumentException('Parameters "ticket_url" and "ticket_username" are required.');
         }
         $this->apiToken = $params['api_token'] ?? '';
         $this->ticketUrl = $params['ticket_url'];
@@ -71,14 +73,14 @@ class TicketService
     public function createTicket(array $ticketData): bool
     {
         $ticketData['email'] = $this->username;
-        $ticketData['domain'] = $this->requestStack->getCurrentRequest()->getHost();
+        $ticketData['domain'] = $this->getDomain();
 
         $response = $this->sendRequest('POST', TicketConstants::TICKET_URL, $ticketData, TicketConstants::CONTENT_TYPE_MAIN);
 
         if (201 === $response['status']) {
             return true;
         } else {
-            throw new TicketException('Erreur lors de la création du ticket');
+            throw new TicketException('Error while creating the ticket');
         }
     }
 
@@ -93,21 +95,13 @@ class TicketService
      */
     public function modifyTicket(array $ticketData): bool
     {
-        $ticketData['email'] = $this->username;
-        $request = $this->requestStack->getCurrentRequest();
-        if (null !== $request) {
-            $host = $request->getHost();
-        } else {
-            throw new AuthenticationFailedException('Erreur lors de la récupération du domaine');
-        }
-        $ticketData['domain'] = $host;
+        $ticketData['domain'] = $this->getDomain();
 
-        $response = $this->sendRequest('PATCH', TicketConstants::TICKET_URL.'/'.$ticketData['token'], $ticketData, TicketConstants::CONTENT_TYPE_PATCH);
-
+        $response = $this->sendRequest('PATCH', TicketConstants::TICKET_URL . '/' . $ticketData['token'], $ticketData, TicketConstants::CONTENT_TYPE_PATCH);
         if (200 === $response['status']) {
             return true;
         } else {
-            throw new TicketException('Erreur lors de la modification du ticket');
+            throw new TicketException('Error while modifying the ticket');
         }
     }
 
@@ -122,7 +116,7 @@ class TicketService
      */
     public function find(string $token): TicketDTO
     {
-        $response = $this->sendRequest('GET', TicketConstants::TICKET_URL.'/'.$token, null, TicketConstants::CONTENT_TYPE_MAIN);
+        $response = $this->sendRequest('GET', TicketConstants::TICKET_URL . '/' . $token, null, TicketConstants::CONTENT_TYPE_MAIN);
 
         if (200 === $response['status']) {
             if (isset($response['content'])) {
@@ -132,7 +126,7 @@ class TicketService
                     }
                 }
 
-                return new TicketDTO($response['content']);
+                return $this->arrayToDTO($response['content']);
             }
             throw new TicketFetchException($token);
         } else {
@@ -152,7 +146,7 @@ class TicketService
         $response = $this->sendRequest('GET', TicketConstants::TICKET_URL, null, TicketConstants::CONTENT_TYPE_MAIN);
 
         if (!isset($response['content']['hydra:member'])) {
-            throw new TicketException('La réponse ne contient pas la clé "hydra:member".');
+            throw new TicketException('Error while fetching tickets');
         }
 
         $filteredTickets = array_filter($response['content']['hydra:member'], function ($ticket) {
@@ -160,7 +154,7 @@ class TicketService
         });
 
         if ($filteredTickets) {
-            $tickets = array_map(fn ($ticket) => new TicketDTO($ticket), $filteredTickets);
+            $tickets = array_map(fn ($ticket) => $this->arrayToDTO($ticket), $filteredTickets);
             usort($tickets, function ($a, $b) {
                 return $b->id - $a->id;
             });
@@ -188,7 +182,7 @@ class TicketService
         $this->authenticate();
 
         try {
-            $response = $this->httpClient->request($method, $this->ticketUrl.$url, [
+            $response = $this->httpClient->request($method, $this->ticketUrl . $url, [
                 'headers' => $this->getHeaders($contentType),
                 'body' => $data ? json_encode($data) : null,
             ]);
@@ -214,7 +208,7 @@ class TicketService
     {
         $this->apiToken = $this->authService->authenticate();
         if (!$this->apiToken) {
-            throw new AuthenticationFailedException('Non authentifié');
+            throw new AuthenticationFailedException('Error while authenticating the user');
         }
     }
 
@@ -228,8 +222,32 @@ class TicketService
     private function getHeaders(string $contentType): array
     {
         return [
-            'Authorization' => 'Bearer '.$this->apiToken,
+            'Authorization' => 'Bearer ' . $this->apiToken,
             'Content-Type' => $contentType,
         ];
+    }
+
+    private function getDomain(): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (null !== $request) {
+            return $request->getHost();
+        } else {
+            throw new AuthenticationFailedException('Error while retrieving the domain');
+        }
+    }
+
+    private function arrayToDTO(array $ticket): TicketDTO
+    {
+        return new TicketDTO(
+            id: $ticket['id'],
+            title: $ticket['title'],
+            createdAt: new \DateTime($ticket['createdAt']),
+            domain: $ticket['domain'],
+            status: $ticket['status'],
+            email: $ticket['email'],
+            token: $ticket['token'],
+            ticketMessages: $ticket['ticketMessages'] ?? []
+        );
     }
 }

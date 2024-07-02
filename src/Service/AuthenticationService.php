@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rayenbou\TicketBundle\Service;
 
 use Rayenbou\TicketBundle\Constants\TicketConstants;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Rayenbou\TicketBundle\Exception\AuthenticationFailedException;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AuthenticationService
 {
@@ -37,7 +39,7 @@ class AuthenticationService
     public function authenticate(): ?string
     {
         try {
-            $response = $this->httpClient->request('POST', $this->ticketUrl.TicketConstants::CHECK_URL, [
+            $response = $this->httpClient->request('POST', $this->ticketUrl . TicketConstants::CHECK_URL, [
                 'headers' => [
                     'Content-Type' => TicketConstants::CONTENT_TYPE_MAIN,
                 ],

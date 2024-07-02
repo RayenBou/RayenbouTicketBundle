@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rayenbou\TicketBundle\Controller;
 
 use Rayenbou\TicketBundle\Form\TicketType;
-use Rayenbou\TicketBundle\Service\TicketService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Rayenbou\TicketBundle\Service\TicketService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/ticket')]
 class TicketController extends AbstractController
@@ -14,8 +16,8 @@ class TicketController extends AbstractController
     #[Route('/', name: 'rayenbou_ticket_index')]
     public function index(TicketService $ticketService, Request $request)
     {
-        $form = $this->createForm(TicketType::class);
-        $form->handleRequest($request);
+        $form = $this->createForm(TicketType::class)
+            ->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $ticketService->createTicket(['title' => $data['title'], 'description' => $data['description']]);
@@ -32,8 +34,8 @@ class TicketController extends AbstractController
     #[Route('/{token}', name: 'rayenbou_ticket_conversation')]
     public function conversation(TicketService $ticketService, string $token, Request $request)
     {
-        $form = $this->createForm(TicketType::class, null, ['title' => false]);
-        $form->handleRequest($request);
+        $form = $this->createForm(TicketType::class, null, ['title' => false])
+            ->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $ticketService->modifyTicket(['token' => $token, 'description' => $data['description']]);
