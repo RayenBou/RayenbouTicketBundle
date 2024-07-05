@@ -29,9 +29,9 @@ Right now the project is in Alpha and currently don't have any recipe but it mig
    ```bash
    composer require rayenbou/dashboard-bundle
     ```
-
-    An error might occur at the cache:clear saying "authentication is missing". Don't worry about this, you just have to follow
-    Parameter setting. Currently working on the recipe to avoid this problem.
+>[!CAUTION]
+> If `Symfony/flex` is enable on your project, an error might occur at the cache:clear saying "authentication key is missing". Don't worry about this, you just have to follow
+ Parameter setting.
 
 
 2. **Parameter Settings**
